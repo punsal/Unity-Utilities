@@ -1,4 +1,4 @@
-namespace Utilities.Object_Pooler
+namespace Utilities.Object_Pooler_System
 {
     public enum PoolItemType
     {

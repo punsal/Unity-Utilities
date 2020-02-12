@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Utilities.Object_Pooler
+namespace Utilities.Object_Pooler_System
 {
     [System.Serializable]
     public struct ObjectPoolItem {
