@@ -3,45 +3,43 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Utilities.Publisher_Subscriber_System {
+namespace Utilities.Publisher_Subscriber_System
+{
     public static class PublisherSubscriber
     {
-        private static Dictionary<Type, IList> Subscriber;
-        private static bool IsInitialized;
+        private static Dictionary<Type, IList> subscriber;
+        private static bool isInitialized;
 
         private static void Initialize()
         {
-            if (IsInitialized) return;
-            IsInitialized = true;
-            Subscriber = new Dictionary<Type, IList>();
+            if (isInitialized) return;
+            isInitialized = true;
+            subscriber = new Dictionary<Type, IList>();
         }
 
         public static void Publish<TMessageType>(TMessageType messageType)
         {
             Initialize();
-            
+
             var type = typeof(TMessageType);
 
-            if (!Subscriber.ContainsKey(type)) return;
-            var actionList = new List<Subscription<TMessageType>>(Subscriber[type].Cast<Subscription<TMessageType>>());
+            if (!subscriber.ContainsKey(type)) return;
+            var actionList = new List<Subscription<TMessageType>>(subscriber[type].Cast<Subscription<TMessageType>>());
 
-            foreach (var action in actionList)
-            {
-                action.PublisherAction(messageType);
-            }
+            foreach (var action in actionList) action.PublisherAction(messageType);
         }
 
         public static Subscription<TMessageType> Subscribe<TMessageType>(Action<TMessageType> action)
         {
             Initialize();
-            
-            var type = typeof(TMessageType);
-            var actionDetail = new Subscription<TMessageType>(action/*, this*/);
 
-            if (!Subscriber.TryGetValue(type, out var actionList))
+            var type = typeof(TMessageType);
+            var actionDetail = new Subscription<TMessageType>(action /*, this*/);
+
+            if (!subscriber.TryGetValue(type, out var actionList))
             {
                 actionList = new List<Subscription<TMessageType>> {actionDetail};
-                Subscriber.Add(type, actionList);
+                subscriber.Add(type, actionList);
             }
             else
             {
@@ -54,12 +52,9 @@ namespace Utilities.Publisher_Subscriber_System {
         public static void Unsubscribe<TMessageType>(Subscription<TMessageType> subscription)
         {
             Initialize();
-            
+
             var type = typeof(TMessageType);
-            if (Subscriber.ContainsKey(type))
-            {
-                Subscriber[type].Remove(subscription);
-            }
+            if (subscriber.ContainsKey(type)) subscriber[type].Remove(subscription);
         }
     }
 }
